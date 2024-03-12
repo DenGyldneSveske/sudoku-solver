@@ -13,25 +13,37 @@ public class SudokuSolver
         Grid = grid;
     }
 
-    public void solveSudoku(int row, int column)
+    public bool solveSudoku(int row, int column)
     {
-        for (int i = row; i < NumberOfRows; i++)
+        if (row == NumberOfRows - 1 && column == NumberOfColumns)
         {
-            for (int j = column; j < NumberOfColumns; j++)
+            return true;
+        }
+
+        if (column == NumberOfColumns)
+        {
+            row++;
+            column = 0;
+        }
+
+        if (Grid[row, column] != 0)
+        {
+            return solveSudoku(row, column + 1);
+        }
+
+        for (int i = 1; i < 10; i++)
+        {
+            if (isSafe(i, row, column))
             {
-                if (Grid[i, j] == 0)
+                Grid[row, column] = i;
+                if (solveSudoku(row, column + 1))
                 {
-                    for (int possibleValue = 1; possibleValue <= 9; possibleValue++)
-                    {
-                        if (isSafe(possibleValue, i, j))
-                        {
-                            Grid[i, j] = possibleValue;
-                            solveSudoku(i, j);
-                        }
-                    }
+                    return true;
                 }
             }
+            Grid[row, column] = 0;
         }
+        return false;
     }
 
     private bool isSafe(int value, int row, int column)
